@@ -224,106 +224,6 @@ struct MySegment
 		this->len = dis(a, b);
 	}
 };
-
-void test3()
-{
-	std::vector<MyPoint3d> ToolPath;
-
-	FILE* fp = NULL;
-	fopen_s(&fp, "E:\\6266\\test.gcode", "w");
-	if (fp == NULL) { return; }
-
-	double Radius = 20.0;
-	double delta = 0.3771;
-	double rote = 0.0314;
-
-	double Z = 0.0;
-
-	for (int j = 0; j < 100; j++)
-	{
-		Z += 0.2;
-		for (int i = 0; i <= 120; i++)
-		{
-			double C = -180.0 + 3.0 * i;
-			double X = Radius * cos(C / 180.0 * pi);
-			double Y = Radius * sin(C / 180.0 * pi);
-			MyPoint3d a(X, Y, Z);
-			ToolPath.push_back(a);
-		}
-		Radius += delta;
-		for (int i = 0; i <= 120; i++)
-		{
-			double C = -180.0 + 3.0 * i;
-			double X = Radius * cos(C / 180.0 * pi);
-			double Y = Radius * sin(C / 180.0 * pi);
-			MyPoint3d a(X, Y, Z);
-			ToolPath.push_back(a);
-		}
-		Radius -= delta;
-	}
-
-	std::vector<MySegment> Path;
-	for (size_t i = 1; i < ToolPath.size(); i++)
-	{
-		MyPoint3d a = ToolPath[i - 1];
-		MyPoint3d b = ToolPath[i];
-		double len = dis(a, b);
-		// unsigned char f = (len < 0.5) ? 0 : 1;   //travel = 0, extrude = 1;
-		myfeature f = (len < 0.5) ? Zup:extrusion;
-		MySegment s(a, b, f);
-		Path.push_back(s);
-	}
-	std::vector<MyPoint3d>().swap(ToolPath);
-
-	fprintf(fp, "START_PRINT EXTRUDER_TEMP=220 BED_TEMP=45\n");
-
-	double E = 0.0;
-
-	fprintf(fp, "M82\n");
-	fprintf(fp, "G90\n");
-	fprintf(fp, "G92 E%7.5f\n", E);
-
-	E -= 0.5;
-	fprintf(fp, "G1 F2400 E%7.5f\n", E);
-	E += 0.15;
-	fprintf(fp, "G1 F2400 E%7.5f\n", E);
-	E -= 0.15;
-	fprintf(fp, "G1 F2400 E%7.5f\n", E);
-
-	MyPoint3d P0 = ToolPath[0];     //error
-	fprintf(fp, "G1 F600 Z%3.1f\n", P0.Z + 0.1);
-	fprintf(fp, "G0 X%7.5f Y%7.5f\n", P0.X, P0.Y);   
-	fprintf(fp, "G1 F600 Z%3.1f\n", P0.Z);
-
-	E += 0.5;
-	fprintf(fp, "G1 F2400 E%7.5f\n", E);
-
-	for (size_t i = 0; i < Path.size(); i++)
-	{
-		MySegment s = Path[i];
-		MyPoint3d P1 = s.P1;
-		if (s.F == travel)    //travel
-		{
-			E -= 0.5;
-			fprintf(fp, "G1 F2400 E%7.5f\n", E);
-			fprintf(fp, "G0 X%7.5f Y%7.5f Z%7.5f\n", P1.X, P1.Y, P1.Z);
-			E += 0.5;
-			fprintf(fp, "G1 F2400 E%7.5f\n", E);
-		}
-		else
-		{
-			E += (s.len * rote);
-			fprintf(fp, "G1 F6000 X%7.5f Y%7.5f E%7.5f\n", P1.X, P1.Y, E);
-		}
-	}
-
-	fprintf(fp, "M106 S0\n");
-	fprintf(fp, "M106 P2 S0\n");
-	fprintf(fp, "END_PRINT\n");
-	fclose(fp);
-
-	return;
-}
 void test4()
 {
 	std::vector<MyPoint3d> ToolPath;
@@ -441,6 +341,5 @@ int main()
 {
     //test1();
 	//test2();
-	//test3();
-	test4();
+	//test4();
 }

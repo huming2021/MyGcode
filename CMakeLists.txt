@@ -1,3 +1,7 @@
 cmake_minimum_required(VERSION 3.26)
 project(MyGcode)
+message("${PROJECT_SOURCE_DIR}")
+# add_library(MyCG ./MyCG.cpp)
+set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/build)
 add_executable(${PROJECT_NAME} ./mygcode.cpp)
+# target_link_libraries(${PROJECT_NAME} MyCG)
