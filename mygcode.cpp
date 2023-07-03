@@ -207,9 +207,9 @@ double dis(MyPoint3d a, MyPoint3d b)
 }
 enum myfeature
 {
-	travel = 0,
+	travel    = 0,
 	extrusion = 1,
-	Zup = 2,
+	Zup       = 2,
 };
 struct MySegment
 {
@@ -242,8 +242,8 @@ void test4()
 		for(size_t j = 0; j <= 120; j++)
 		{
 			double C = -180.0 + 3.0*j;
-			double X = Radius*cos(C/180.0*pi);
-			double Y = Radius*sin(C/180.0*pi);
+			double X = Radius*cos(C/180.0*pi) + 110.0;
+			double Y = Radius*sin(C/180.0*pi) + 110.0;
 			MyPoint3d a(X, Y, Z);
 			ToolPath.push_back(a);
 		}
@@ -254,6 +254,7 @@ void test4()
 	// 	MyPoint3d a = ToolPath[i];
 	// 	fprintf(fp, "X%lf Y%lf Z%lf\n", a.X, a.Y, a.Z);
 	// }
+	// return;
 
 	std::vector<MySegment> Path;
 	for(size_t i = 1; i < ToolPath.size(); i++)
@@ -283,10 +284,10 @@ void test4()
 
 	MyPoint3d P0 = Path[0].P0;     
 	fprintf(fp, "G1 F600 Z%3.1f\n", P0.Z + 0.1);
-	fprintf(fp, "G0 X%7.5f Y%7.5f\n", P0.X, P0.Y);   
+	fprintf(fp, "G1 F14400 X%7.5f Y%7.5f\n", P0.X, P0.Y);   
 	fprintf(fp, "G1 F600 Z%3.1f\n", P0.Z);
 
-	double F_extrusion = 100.0*60.0;   
+	double F_extrusion = 50.0*60.0;   
 	double F_travel = 500.0*60.0;
 	double F_Zup = 600.0;
 
@@ -341,5 +342,5 @@ int main()
 {
     //test1();
 	//test2();
-	//test4();
+	test4();
 }
